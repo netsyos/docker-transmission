@@ -1,4 +1,4 @@
-FROM netsyos/docker-base:latest
+FROM netsyos/base:latest
 
 RUN apt-get -y install transmission-deamon
 
