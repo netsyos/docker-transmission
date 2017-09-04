@@ -1,6 +1,6 @@
 FROM netsyos/base:latest
 
-RUN apt-get -y install transmission-deamon
+RUN apt-get -y install transmission-daemon
 
 RUN mkdir /etc/service/transmission
 ADD service/transmission.sh /etc/service/transmission/run
