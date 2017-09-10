@@ -1,5 +1,6 @@
-FROM netsyos/base:latest
+FROM netsyos/nginx:latest
 
+RUN apt-get update
 RUN apt-get -y install transmission-daemon
 
 #RUN echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf
