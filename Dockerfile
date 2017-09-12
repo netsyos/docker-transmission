@@ -9,6 +9,8 @@ RUN mkdir /etc/couchpotato
 RUN mkdir /var/couchpotato
 RUN useradd --system --user-group --no-create-home couchpotato
 RUN chown -R couchpotato:couchpotato /opt/couchpotato
+RUN chown -R couchpotato:couchpotato /etc/couchpotato
+RUN chown -R couchpotato:couchpotato /var/couchpotato
 
 #RUN echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf
 #RUN echo 'net.core.wmem_max = 4194304' >> /etc/sysctl.conf
