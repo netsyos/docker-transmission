@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y nzbdrone
 RUN mkdir -p /var/sonarr
 
 
-RUN cd /opt \
+RUN cd /opt && \
 wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
 tar -xvzf Radarr.develop.*.linux.tar.gz
 RUN mkdir -p /var/radarr
