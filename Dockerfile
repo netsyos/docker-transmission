@@ -24,15 +24,15 @@ RUN mkdir -p /var/sonarr
 
 
 RUN cd /opt \
-wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) \
+wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
 tar -xvzf Radarr.develop.*.linux.tar.gz
 RUN mkdir -p /var/radarr
 
 
-RUN jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}') \
-wget -q https://github.com/Jackett/Jackett/releases/download/$jackettver/Jackett.Binaries.Mono.tar.gz \
-tar -xvf Jackett* \
-mkdir /opt/jackett \
+RUN jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}') && \
+wget -q https://github.com/Jackett/Jackett/releases/download/$jackettver/Jackett.Binaries.Mono.tar.gz && \
+tar -xvf Jackett* && \
+mkdir /opt/jackett && \
 mv Jackett/* /opt/jackett
 
 #RUN echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf
