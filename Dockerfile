@@ -29,13 +29,11 @@ tar -xvzf Radarr.develop.*.linux.tar.gz
 RUN mkdir -p /var/radarr
 
 
-#jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}')
-#wget -q https://github.com/Jackett/Jackett/releases/download/$jackettver/Jackett.Binaries.Mono.tar.gz
-#tar -xvf Jackett*
-#sudo mkdir /opt/jackett
-#sudo mv Jackett/* /opt/jackett
-#mono /opt/jackett/JackettConsole.exe
-#mono --debug /opt/jackett/JackettConsole.exe --NoRestart
+RUN jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}') \
+wget -q https://github.com/Jackett/Jackett/releases/download/$jackettver/Jackett.Binaries.Mono.tar.gz \
+tar -xvf Jackett* \
+mkdir /opt/jackett \
+mv Jackett/* /opt/jackett
 
 #RUN echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf
 #RUN echo 'net.core.wmem_max = 4194304' >> /etc/sysctl.conf
