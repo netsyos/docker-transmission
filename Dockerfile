@@ -23,9 +23,10 @@ RUN apt-get update && apt-get install -y nzbdrone
 RUN mkdir -p /var/sonarr
 
 
-#RUN wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 )
-#RUN tar -xvzf Radarr.develop.*.linux.tar.gz
-#RUN mkdir -p /var/radarr
+RUN cd /opt \
+wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) \
+tar -xvzf Radarr.develop.*.linux.tar.gz
+RUN mkdir -p /var/radarr
 
 
 #jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}')
