@@ -49,6 +49,7 @@ RUN \
 	"https://github.com/tidusjar/Ombi/releases/download/${ombi_tag}/Ombi.zip" && \
  unzip -q /tmp/ombi-src.zip -d /tmp && \
  mv /tmp/Release /opt/ombi
+RUN mkdir -p /var/ombi
 
 #RUN echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf
 #RUN echo 'net.core.wmem_max = 4194304' >> /etc/sysctl.conf
