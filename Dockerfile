@@ -33,6 +33,23 @@ tar -xvf Jackett* && \
 mkdir /opt/jackett && \
 mv Jackett/* /opt/jackett
 
+
+
+RUN apt-get install -y libunwind8
+
+RUN useradd -u 9001 -U -d /var/ombi -s /bin/false ombi && usermod -G users ombi
+
+RUN \
+ mkdir -p \
+	/opt && \
+ ombi_tag=$(curl -sX GET "https://api.github.com/repos/tidusjar/Ombi/releases/latest" \
+	| awk '/tag_name/{print $4;exit}' FS='[""]') && \
+ curl -o \
+ /tmp/ombi-src.zip -L \
+	"https://github.com/tidusjar/Ombi/releases/download/${ombi_tag}/Ombi.zip" && \
+ unzip -q /tmp/ombi-src.zip -d /tmp && \
+ mv /tmp/Release /opt/ombi
+
 #RUN echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf
 #RUN echo 'net.core.wmem_max = 4194304' >> /etc/sysctl.conf
 COPY config/default/* /etc/default/
