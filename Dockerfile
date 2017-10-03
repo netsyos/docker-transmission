@@ -74,6 +74,11 @@ RUN mkdir /etc/service/jackett
 ADD service/jackett.sh /etc/service/jackett/run
 RUN chmod +x /etc/service/jackett/run
 
+
+RUN mkdir /etc/service/ombi
+ADD service/ombi.sh /etc/service/ombi/run
+RUN chmod +x /etc/service/ombi/run
+
 RUN mkdir /etc/service/logs
 ADD service/logs.sh /etc/service/logs/run
 RUN chmod +x /etc/service/logs/run
