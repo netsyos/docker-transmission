@@ -28,9 +28,7 @@ wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux
 tar -xvzf Radarr.develop.*.linux.tar.gz
 RUN mkdir -p /var/radarr
 
-
-RUN jackettver=$(wget -q https://github.com/Jackett/Jackett/releases/latest -O - | grep -E \/tag\/ | awk -F "[><]" '{print $3}') && \
-wget -q https://github.com/Jackett/Jackett/releases/download/$jackettver/Jackett.Binaries.Mono.tar.gz && \
+RUN wget $( curl -s https://api.github.com/repos/Jackett/Jackett/releases | grep Binaries.Mono.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
 tar -xvf Jackett* && \
 mkdir /opt/jackett && \
 mv Jackett/* /opt/jackett
@@ -50,6 +48,14 @@ RUN chmod +x /etc/service/couchpotato/run
 RUN mkdir /etc/service/sonarr
 ADD service/sonarr.sh /etc/service/sonarr/run
 RUN chmod +x /etc/service/sonarr/run
+
+RUN mkdir /etc/service/radarr
+ADD service/radarr.sh /etc/service/radarr/run
+RUN chmod +x /etc/service/radarr/run
+
+RUN mkdir /etc/service/jackett
+ADD service/jackett.sh /etc/service/jackett/run
+RUN chmod +x /etc/service/jackett/run
 
 RUN mkdir /etc/service/logs
 ADD service/logs.sh /etc/service/logs/run
