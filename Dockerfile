@@ -31,13 +31,13 @@ RUN mkdir -p /var/sonarr
 
 RUN cd /opt && \
 file=$( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
-echo $file && \
+echo Radarr File $file && \
 wget $file && \
 tar -xvzf Radarr.*.linux.tar.gz
 RUN mkdir -p /var/radarr
 
 RUN file=$( curl -s https://api.github.com/repos/Jackett/Jackett/releases | grep Binaries.Mono.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
-echo $file && \
+echo Jackett File $file && \
 wget $file && \
 tar -xvf Jackett* && \
 mkdir /opt/jackett && \
