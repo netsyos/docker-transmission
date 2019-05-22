@@ -29,11 +29,34 @@ RUN apt-get update && apt-get install -y nzbdrone
 RUN mkdir -p /var/sonarr
 
 
-RUN cd /opt && \
-file=$( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
-echo Radarr File $file && \
-wget $file && \
-tar -xvzf Radarr.*.linux.tar.gz
+RUN \
+ echo "**** install jq ****" && \
+ apt-get install -y \
+	jq
+
+RUN \
+ echo "**** install radarr ****" && \
+ if [ -z ${RADARR_RELEASE+x} ]; then \
+	RADARR_RELEASE=$(curl -sX GET "https://api.github.com/repos/Radarr/Radarr/releases" \
+	| jq -r '.[0] | .tag_name'); \
+ fi && \
+ radarr_url=$(curl -s https://api.github.com/repos/Radarr/Radarr/releases/tags/"${RADARR_RELEASE}" \
+	|jq -r '.assets[].browser_download_url' |grep linux) && \
+ mkdir -p \
+	/opt/radarr && \
+ curl -o \
+ /tmp/radar.tar.gz -L \
+	"${radarr_url}" && \
+ tar ixzf \
+ /tmp/radar.tar.gz -C \
+	/opt/radarr --strip-components=1
+
+
+# RUN cd /opt && \
+# file=$( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
+# echo Radarr File $file && \
+# wget $file && \
+# tar -xvzf Radarr.*.linux.tar.gz
 RUN mkdir -p /var/radarr
 
 RUN file=$( curl -s https://api.github.com/repos/Jackett/Jackett/releases | grep Binaries.Mono.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
@@ -95,4 +118,10 @@ ADD service/logs.sh /etc/service/logs/run
 RUN chmod +x /etc/service/logs/run
 
 # Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN \
+ echo "**** clean up ****" && \
+ rm -rf \
+	/tmp/* \
+	/var/lib/apt/lists/* \
+    /var/tmp/*
