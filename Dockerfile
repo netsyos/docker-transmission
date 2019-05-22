@@ -30,11 +30,15 @@ RUN mkdir -p /var/sonarr
 
 
 RUN cd /opt && \
-wget $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
+file=$( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
+echo $file && \
+wget $file && \
 tar -xvzf Radarr.*.linux.tar.gz
 RUN mkdir -p /var/radarr
 
-RUN wget $( curl -s https://api.github.com/repos/Jackett/Jackett/releases | grep Binaries.Mono.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
+RUN file=$( curl -s https://api.github.com/repos/Jackett/Jackett/releases | grep Binaries.Mono.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) && \
+echo $file && \
+wget $file && \
 tar -xvf Jackett* && \
 mkdir /opt/jackett && \
 mv Jackett/* /opt/jackett
