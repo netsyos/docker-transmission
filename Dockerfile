@@ -14,7 +14,7 @@ RUN apt-get -y install libcurl4-openssl-dev bzip2 mediainfo sqlite3
 RUN \
  echo "**** install packages for lidarr****" && \
  apt-get install --no-install-recommends -y \
-	libchromaprint-tools \
+	libchromaprint-tools && \
  echo "**** install lidarr ****" && \
  mkdir -p /var/lidarr && \
  mkdir -p /app/lidarr && \
