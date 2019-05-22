@@ -4,21 +4,33 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E03280
 RUN apt install apt-transport-https
 RUN echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial/snapshots/5.16.0 main" | tee /etc/apt/sources.list.d/mono-official-stable.list
 RUN apt-get update
-RUN apt-get -y install python git
+RUN apt-get -y install python git jq
 RUN apt-get -y install mono-devel libmono-cil-dev
 RUN mono --version
 
 RUN apt-get -y install transmission-daemon
 RUN apt-get -y install libcurl4-openssl-dev bzip2 mediainfo sqlite3
 
+RUN \
+ echo "**** install packages for lidarr****" && \
+ apt-get install --no-install-recommends -y \
+	libchromaprint-tools \
+ echo "**** install lidarr ****" && \
+ mkdir -p /var/lidarr && \
+ mkdir -p /app/lidarr && \
+ if [ -z ${LIDARR_RELEASE+x} ]; then \
+	LIDARR_RELEASE=$(curl -sL "https://services.lidarr.audio/v1/update/${LIDARR_BRANCH}/changes?os=linux" \
+	| jq -r '.[0].version'); \
+ fi && \
+ lidarr_url=$(curl -sL "https://services.lidarr.audio/v1/update/${LIDARR_BRANCH}/changes?os=linux" \
+	| jq -r "first(.[] | select(.version == \"${LIDARR_RELEASE}\")) | .url") && \
+ curl -o \
+ /tmp/lidarr.tar.gz -L \
+	"${lidarr_url}" && \
+ tar ixzf \
+    /tmp/lidarr.tar.gz -C \
+	/app/lidarr --strip-components=1
 
-RUN git clone --depth 1 https://github.com/RuudBurger/CouchPotatoServer.git /opt/couchpotato
-RUN mkdir /etc/couchpotato
-RUN mkdir /var/couchpotato
-RUN useradd --system --user-group --no-create-home couchpotato
-RUN chown -R couchpotato:couchpotato /opt/couchpotato
-RUN chown -R couchpotato:couchpotato /etc/couchpotato
-RUN chown -R couchpotato:couchpotato /var/couchpotato
 
 
 RUN \
@@ -49,32 +61,11 @@ mv Jackett/* /opt/jackett
 
 
 RUN apt-get install -y libunwind8
-
-#RUN useradd -u 9001 -U -d /var/ombi -s /bin/false ombi && usermod -G users ombi
-
-#RUN \
-# mkdir -p \
-#	/opt && \
-# ombi_tag=$(curl -sX GET "https://api.github.com/repos/tidusjar/Ombi/releases/latest" \
-#	| awk '/tag_name/{print $4;exit}' FS='[""]') && \
-# curl -o \
-# /tmp/ombi-src.zip -L \
-#	"https://github.com/tidusjar/Ombi/releases/download/${ombi_tag}/Ombi.zip" && \
-# unzip -q /tmp/ombi-src.zip -d /tmp && \
-# mv /tmp/Release /opt/ombi
-#RUN mkdir -p /var/ombi
-
-#RUN echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf
-#RUN echo 'net.core.wmem_max = 4194304' >> /etc/sysctl.conf
 COPY config/default/* /etc/default/
 
 RUN mkdir /etc/service/transmission
 ADD service/transmission.sh /etc/service/transmission/run
 RUN chmod +x /etc/service/transmission/run
-
-RUN mkdir /etc/service/couchpotato
-ADD service/couchpotato.sh /etc/service/couchpotato/run
-RUN chmod +x /etc/service/couchpotato/run
 
 RUN mkdir /etc/service/sonarr
 ADD service/sonarr.sh /etc/service/sonarr/run
@@ -84,18 +75,23 @@ RUN mkdir /etc/service/radarr
 ADD service/radarr.sh /etc/service/radarr/run
 RUN chmod +x /etc/service/radarr/run
 
+RUN mkdir /etc/service/lidarr
+ADD service/lidarr.sh /etc/service/lidarr/run
+RUN chmod +x /etc/service/lidarr/run
+
 RUN mkdir /etc/service/jackett
 ADD service/jackett.sh /etc/service/jackett/run
 RUN chmod +x /etc/service/jackett/run
-
-
-#RUN mkdir /etc/service/ombi
-#ADD service/ombi.sh /etc/service/ombi/run
-#RUN chmod +x /etc/service/ombi/run
 
 RUN mkdir /etc/service/logs
 ADD service/logs.sh /etc/service/logs/run
 RUN chmod +x /etc/service/logs/run
 
 # Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN \ 
+    echo "**** cleanup ****" && \
+    apt-get clean && \
+    rm -rf \
+        /tmp/* \
+        /var/lib/apt/lists/* \
+        /var/tmp/*
