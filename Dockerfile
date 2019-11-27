@@ -42,7 +42,7 @@ RUN \
  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC && \
  echo "deb http://apt.sonarr.tv/ master main" > /etc/apt/sources.list.d/sonarr.list
 
-RUN apt-get update && apt-get install -y nzbdrone
+RUN apt-get update && apt-get install -y --allow-unauthenticated nzbdrone
 RUN mkdir -p /var/sonarr
 
 
