@@ -5,7 +5,7 @@ ENV XDG_CONFIG_HOME="/config/xdg"
 
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 RUN apt-get update
-RUN apt install apt-transport-https sudo
+RUN apt install -y apt-transport-https sudo
 RUN apt-get -y install python git jq
 RUN apt-get -y install transmission-daemon
 RUN apt-get -y install libcurl4-openssl-dev bzip2 mediainfo sqlite3
